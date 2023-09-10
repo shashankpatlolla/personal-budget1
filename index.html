@@ -3,27 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Budget</title>
-    <link rel="stylesheet" href="/reset.css">
-    <link rel="stylesheet" href="/main.css">
+    <!-- This is an A11y Change -->
+    <title aria-label="Personal Budget">Personal Budget</title>
+    <!-- This is an SEO Change -->
+    <meta name="description" content="A personal budget application">
+    <!-- This is an SEO Change -->
+    <meta name="author" content="Shashank Patlolla">
+    <!-- This is an SEO Change -->
+    <meta name="keywords" content="HTML, CSS, JavaScript">
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="main.css">
 </head>
 <body>
-
-    <div class="menu">
+    <!-- This is an A11y Change --><!-- This is a Semantic HTML Change -->
+    <nav class="menu" aria-label="Main navigation">
+        <!-- This is an A11y Change -->
+        <a href="#skipcontent" >Skip to content</a>
         <ul>
             <li><a href="/">Homepage</a></li>
-            <li><a href="/about.html">About</a></li>
-            <li><a href="/login.html">Login</a></li>
+            <!-- This is an SEO Change -->
+            <li><a href="about.html" title="More about Personal Budget App">About</a></li>
+            <!-- This is an A11y Change -->
+            <li><a href="login.html" aria-label="Login to your account">Login</a></li>
             <li><a href="https://google.com">Google</a></li>
         </ul>
-    </div>
-
-    <div class="hero">
+    </nav>
+    <!-- This is a Semantic HTML Change -->
+    <header class="hero">
         <h1>Personal Budget</h1>
         <h2>A personal-budget management app</h2>
-    </div>
-
-    <div class="container center">
+    </header>
+    <!-- This is a Semantic HTML Change -->
+    <main class="container center" id="skipcontent">
 
         <div class="page-area">
 
@@ -93,13 +104,24 @@
 
         </div>
 
-    </div>
-
-    <div class="bottom">
+    </main>
+    <!-- This is a Semantic HTML Change -->
+    <footer class="bottom">
         <div class="center">
-            All rights reserved &copy; Fabio Nolasco
+            <!-- This is a Semantic HTML Change -->
+            <mark>All rights reserved &copy; Shashank Patlolla</mark>
+            <br><br>
+            <!-- This is a Semantic HTML Change -->
+            <details>
+                <summary>About Personal Budget App</summary>
+                <p>
+                The Personal Budget app is designed to help you manage your finances effectively.
+                Whether you need to track your expenses, set budget goals, or receive alerts when you
+                approach your spending limits, this app has you covered.
+                </p>
+            </details>
         </div>
-    </div>
+    </footer>
 
 </body>
 </html>
