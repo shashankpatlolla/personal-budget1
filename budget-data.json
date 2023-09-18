@@ -2,11 +2,11 @@
     "budget": [
       {
         "title": "rent",
-        "amount": 1000
+        "amount": 500
       },
       {
         "title": "grocery",
-        "amount": 300
+        "amount": 500
       },
       {
         "title": "utilities",
@@ -14,11 +14,11 @@
       },
       {
         "title": "entertainment",
-        "amount": 150
+        "amount": 180
       },
       {
         "title": "Transportation",
-        "amount": 200
+        "amount": 220
       },
       {
         "title": "Dining out",

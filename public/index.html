@@ -99,7 +99,14 @@
                 <h1>Chart</h1>
                 <p><canvas id="myChart" width="400" height="400"></canvas></p>
             </div>
-
+            <div class="text-box">
+                <h1>D3JS Bar Chart</h1>
+                <div id="chart-container" width="400" height="400"></div>
+            </div>
+            <div class="text-box">
+                <h1>D3JS Pie Chart</h1>
+                <div id="chart-container1"></div>
+            </div>
         </div>
 
     </main>
@@ -122,22 +129,13 @@
     </footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js" integrity="sha512-quHCp3WbBNkwLfYUMd+KwBAgpVukJu5MncuQaWXgCrfgcxCJAq/fo+oqrRKOj+UKEmyMCG3tb8RB63W+EmrOBg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js" integrity="sha512-M7nHCiNUOwFt6Us3r8alutZLm9qMt4s9951uo8jqO4UwJ1hziseL6O3ndFyigx6+LREfZqnhHxYjKRJ8ZQ69DQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script>
         var dataSource = {
         datasets: [{
             data: [],
-            backgroundColor :[
-            '#FF5733',
-            '#3498DB',
-            '#27AE60',
-            '#9B59B6',
-            '#F1C40F',
-            '#34495E',
-            '#E74C3C'
-            ],
-        }],
-
-        // These labels appear in the legend and in the tooltips when hovering different arcs
+            backgroundColor :['#FF5733','#3498DB','#27AE60','#9B59B6','#F1C40F','#34495E','#E74C3C']}],
         labels: []
         };
 
@@ -171,7 +169,136 @@
                 }
             })
         };
-        getBudget();
+
+        function renderD3Chart(data){
+            const svg = d3.select("#chart-container")
+                .append("svg")
+                .attr("width", 400)
+                .attr("height", 400);
+
+            const maxAmount = d3.max(data.budget, (d) => d.amount);
+            // Create bars based on data
+            svg.selectAll("rect")
+                .data(data.budget)
+                .enter()
+                .append("rect")
+                .attr("x", (d, i) => i * 50)
+                .attr("y", (d) => 300 - (d.amount /maxAmount) * 200)
+                .attr("width", 40)
+                .attr("height", (d) => (d.amount /maxAmount) * 200)
+                .attr("fill", "blue");
+
+            svg.selectAll("text")
+                .data(data.budget)
+                .enter()
+                .append("text")
+                .attr("x", (d, i) => i * 50 + 20) 
+                .attr("y", (d) => 300 - (d.amount /maxAmount) * 200 - 10)
+                .text((d) => d.title)
+                .attr("text-anchor", "middle") 
+                .attr("fill", "black"); 
+
+        }
+        // Load data from JSON file
+        function getD3Chart(){
+        fetch('/budget')
+        .then(res => { return res.json()})
+        .then(function(data) {
+           // console.log(data);
+            renderD3Chart(data);
+        })
+        .catch(function(error) {
+        console.error("Error loading data:", error);
+        });
+        }
+
+
+        //D3Js Pie Chart
+        var width = 600;
+        var height = 400;
+        var radius = Math.min(width, height) / 2;
+
+        // Append an SVG element to the chart-container div
+        var svg = d3.select("#chart-container1")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+
+        // Load data from the JSON file
+        d3.json("/budget").then(function(data) {
+            // Create a pie chart layout
+            var pie = d3.pie()
+                .value(function(d) { return d.amount; });
+
+            // Define arc generator
+            var arc = d3.arc()
+                .innerRadius(0)
+                .outerRadius(radius);
+
+            // Create arcs for each data point
+            var arcs = svg.selectAll(".arc")
+                .data(pie(data.budget))
+                .enter()
+                .append("g")
+                .attr("class", "arc");
+
+            var colorScale = d3.scaleOrdinal()
+                .domain(data.budget.map(function(d) { return d.title; }))
+                .range(['#FF5733','#3498DB','#27AE60','#9B59B6','#F1C40F','#34495E','#E74C3C']);
+                
+            arcs.append("path")
+                .attr("d", arc)
+                .attr("fill", function(d) { return colorScale(d.data.title); });
+
+            arcs.append("polyline")
+                .attr("opacity",0.2)
+                .attr("stroke", "black") // Line color
+                .attr("stroke-width", 2) // Line width
+                .attr("fill", "none") // No fill
+                .attr("points", function(d) {
+                    var centroid = arc.centroid(d);
+                    var labelX = centroid[0]; // X-coordinate of the label
+                    var labelY = centroid[1]; // Y-coordinate of the label
+                    var midAngle = Math.atan2(labelY, labelX); // Calculate the midpoint angle
+
+                    var startX = 0;
+                    var startY = 0;
+                    var endX = Math.cos(midAngle) * (radius + 30); // Adjust the distance for the label outside the pie
+                    var endY = Math.sin(midAngle) * (radius + 30);
+                    return [startX, startY, endX, endY];
+                });
+
+            arcs.append("text")
+                .attr("transform", function(d) {
+                    var centroid = arc.centroid(d);
+
+                    var labelX = centroid[0]; // X-coordinate of the label
+                    var labelY = centroid[1]; // Y-coordinate of the label
+                    var midAngle = Math.atan2(labelY, labelX); // Calculate the midpoint angle
+                    // Calculate the ending point of the polyline (outside the pie)
+                    var endX = Math.cos(midAngle) * (radius+20); // Adjust the distance for the label outside the pie
+                    var endY = Math.sin(midAngle) * (radius+20);
+
+                    // Calculate the new label position at the end of the polyline
+                    var labelPositionX = endX;
+                    var labelPositionY = endY;
+
+                    // Adjust the horizontal positioning to move the label outside the pie chart
+                    var textAnchor = labelPositionX > 0 ? "start" : "end";
+
+                    return "translate(" + labelPositionX + "," + labelPositionY + ")";
+                })
+                .attr("dy", "-0.5em")
+                .attr("text-anchor", function(d) {
+                return "end";})
+                .text(function(d) { return d.data.title;});
+            });
+            getBudget();
+            getD3Chart();
+
     </script>
 </body>
   </html>
