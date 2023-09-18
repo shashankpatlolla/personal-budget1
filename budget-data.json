@@ -1,0 +1,33 @@
+{
+    "budget": [
+      {
+        "title": "rent",
+        "amount": 1000
+      },
+      {
+        "title": "grocery",
+        "amount": 300
+      },
+      {
+        "title": "utilities",
+        "amount": 200
+      },
+      {
+        "title": "entertainment",
+        "amount": 150
+      },
+      {
+        "title": "Transportation",
+        "amount": 200
+      },
+      {
+        "title": "Dining out",
+        "amount": 150
+      },
+      {
+        "title": "Shopping",
+        "amount": 100
+      }
+    ]
+  }
+  

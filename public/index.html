@@ -94,12 +94,10 @@
                     because they know it is all good and accounted for.
                 </p>
             </div>
-    
+            
             <div class="text-box">
-                <h1>Free</h1>
-                <p>
-                    This app is free!!! And you are the only one holding your data!
-                </p>
+                <h1>Chart</h1>
+                <p><canvas id="myChart" width="400" height="400"></canvas></p>
             </div>
 
         </div>
@@ -122,6 +120,58 @@
             </details>
         </div>
     </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js" integrity="sha512-quHCp3WbBNkwLfYUMd+KwBAgpVukJu5MncuQaWXgCrfgcxCJAq/fo+oqrRKOj+UKEmyMCG3tb8RB63W+EmrOBg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        var dataSource = {
+        datasets: [{
+            data: [],
+            backgroundColor :[
+            '#FF5733',
+            '#3498DB',
+            '#27AE60',
+            '#9B59B6',
+            '#F1C40F',
+            '#34495E',
+            '#E74C3C'
+            ],
+        }],
 
+        // These labels appear in the legend and in the tooltips when hovering different arcs
+        labels: []
+        };
+
+        function createChart(){
+            var ctx = document.getElementById("myChart");
+            var myPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: dataSource
+            });
+        }
+
+        /* function getBudget() {
+            axios.get('http://localhost:3005/budget')
+            .then( res => {
+                for (var i = 0; i < res.data.myBudget.length; i++) {
+                    dataSource.datasets[0].data[i] = res.data.myBudget[i].budget;
+                    dataSource.labels[i] = res.data.myBudget[i].title;
+                    createChart();
+                }
+            });
+        } */
+        function getBudget() {
+            fetch('/budget')
+            .then(res => {return res.json()})
+            .then(data => {
+                for (var i = 0; i < data.budget.length; i++) {
+                    dataSource.datasets[0].data[i] = data.budget[i].amount;
+                    dataSource.labels[i] = data.budget[i].title;
+                    createChart();
+
+                }
+            })
+        };
+        getBudget();
+    </script>
 </body>
-</html>
+  </html>
