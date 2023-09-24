@@ -147,7 +147,7 @@
             });
         }
 
-        /* function getBudget() {
+/*         function getBudget() {
             axios.get('http://localhost:3005/budget')
             .then( res => {
                 for (var i = 0; i < res.data.myBudget.length; i++) {
@@ -157,8 +157,8 @@
                 }
             });
         } */
-        function getBudget() {
-            fetch('/budget')
+         function getBudget() {
+            fetch('http://localhost:3005/budget')
             .then(res => {return res.json()})
             .then(data => {
                 for (var i = 0; i < data.budget.length; i++) {
@@ -201,7 +201,7 @@
         }
         // Load data from JSON file
         function getD3Chart(){
-        fetch('/budget')
+        fetch('http://localhost:3005/budget')
         .then(res => { return res.json()})
         .then(function(data) {
            // console.log(data);
@@ -228,7 +228,7 @@
 
 
         // Load data from the JSON file
-        d3.json("/budget").then(function(data) {
+        d3.json("http://localhost:3005/budget").then(function(data) {
             // Create a pie chart layout
             var pie = d3.pie()
                 .value(function(d) { return d.amount; });
