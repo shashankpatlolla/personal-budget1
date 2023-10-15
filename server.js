@@ -1,53 +1,61 @@
 const express = require('express');
-const fs = require('fs');
+const mongoose = require('mongoose');
 const cors = require('cors');
 const app = express();
 const port = 3005;
 
-
-//app.use('/', express.static('public'));
+app.use(express.json()); // Parse JSON requests
 app.use(cors());
 
-const budget ={
-    myBudget :[
-    {
-        title: 'Shopping',
-        budget: 100
+const budgetSchema = new mongoose.Schema({
+    title: {
+      type: String,
+      required: true,
+      trim: true,
     },
-    {
-        title: 'Groceries',
-        budget: 200
+    amount: {
+      type: Number,
+      required: true,
     },
-    {
-        title: 'Rent',
-        budget: 300
-    }
-]};
-/* 
-app.get('/hello',(req,res)=>{
-    res.send('Hello World !!!');
+    color: {
+      type: String,
+      required: true,
+    },
 });
-*/
+
+const Budget = mongoose.model('budgets', budgetSchema);
+const url = 'mongodb://127.0.0.1:27017/instructions_part2';
+mongoose.connect(url, {useNewUrlParser: true,  useUnifiedTopology: true,})
+.then(()=>{
+    console.log("Connected to the database");
+});
+
 app.get('/budget',(req,res)=>{
-
-    fs.readFile('budget-data.json', 'utf8', (error, data) => {
-        if (error) {
-          console.error(error);
-          return res.status(500).send('Error reading budget data.');
-        }
-    
-        try {
-          const budgetData = JSON.parse(data);
-          res.json(budgetData);
-        } 
-        catch (parseError) {
-          console.error(parseError);
-          res.status(500).send('Error parsing budget data.');
-        }
-      });
-    //res.json(budget);
+    //console.log("Shashank Patlolla");
+    Budget.find({})
+    .then((data)=>{
+        //console.log(data)
+        res.json(data);
+        //mongoose.connection.close();
+    })
+    .catch((connectionError)=>{
+        console.log(connectionError);
+    })
 });
 
+app.post('/budget',(req,res)=>{
+    //console.log(req.body);
+    const newData = req.body;
+    Budget.insertMany(newData)
+    .then((data)=>{
+        res.json({ message: 'Data added successfully', insertedData: newData });
+        //console.log(data);
+        //mongoose.connection.close();
+    })
+    .catch((connectionError)=>{
+        console.log(connectionError);
+    })
+});
 app.listen(port,()=>{
-     console.log(`App is listening at localhost:${port}`);
+    console.log(`App is listening at localhost:${port}`);
 });

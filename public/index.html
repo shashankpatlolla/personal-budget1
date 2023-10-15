@@ -135,7 +135,8 @@
         var dataSource = {
         datasets: [{
             data: [],
-            backgroundColor :['#FF5733','#3498DB','#27AE60','#9B59B6','#F1C40F','#34495E','#E74C3C']}],
+            backgroundColor :[]
+        }],
         labels: []
         };
 
@@ -161,9 +162,19 @@
             fetch('http://localhost:3005/budget')
             .then(res => {return res.json()})
             .then(data => {
-                for (var i = 0; i < data.budget.length; i++) {
+                //console.log(data);
+                /* for (var i = 0; i < data.budget.length; i++) {
                     dataSource.datasets[0].data[i] = data.budget[i].amount;
                     dataSource.labels[i] = data.budget[i].title;
+                    createChart();
+
+                } */
+                for (var i = 0; i < data.length; i++) {
+                    dataSource.datasets[0].data[i] = data[i].amount;
+                    dataSource.labels[i] = data[i].title;
+                    dataSource.datasets[0].backgroundColor[i] = data[i].color;
+                    // console.log(dataSource.backgroundColor[i]);
+                    //console.log(data[i].color);
                     createChart();
 
                 }
@@ -176,10 +187,10 @@
                 .attr("width", 400)
                 .attr("height", 400);
 
-            const maxAmount = d3.max(data.budget, (d) => d.amount);
+            const maxAmount = d3.max(data, (d) => d.amount);
             // Create bars based on data
             svg.selectAll("rect")
-                .data(data.budget)
+                .data(data)
                 .enter()
                 .append("rect")
                 .attr("x", (d, i) => i * 50)
@@ -189,7 +200,7 @@
                 .attr("fill", "blue");
 
             svg.selectAll("text")
-                .data(data.budget)
+                .data(data)
                 .enter()
                 .append("text")
                 .attr("x", (d, i) => i * 50 + 20) 
@@ -230,6 +241,7 @@
         // Load data from the JSON file
         d3.json("http://localhost:3005/budget").then(function(data) {
             // Create a pie chart layout
+            //console.log(data);
             var pie = d3.pie()
                 .value(function(d) { return d.amount; });
 
@@ -240,14 +252,15 @@
 
             // Create arcs for each data point
             var arcs = svg.selectAll(".arc")
-                .data(pie(data.budget))
+                .data(pie(data))
                 .enter()
                 .append("g")
                 .attr("class", "arc");
 
             var colorScale = d3.scaleOrdinal()
-                .domain(data.budget.map(function(d) { return d.title; }))
-                .range(['#FF5733','#3498DB','#27AE60','#9B59B6','#F1C40F','#34495E','#E74C3C']);
+                .domain(data.map(function(d) { return d.title; }))
+                .range(data.map(function(d) { return d.color}));
+                //.range(['#FF5733','#3498DB','#27AE60','#9B59B6','#F1C40F','#34495E','#E74C3C']);
                 
             arcs.append("path")
                 .attr("d", arc)
